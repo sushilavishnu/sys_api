@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="f85a6ce5-48cc-4e79-bfd7-37f53cd33f28" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="operations_apiFlow" doc:id="1f077cee-4844-4451-8fdc-d0a5fcf2ca89" >
+		<http:listener doc:name="Listener" doc:id="d24e32f1-554f-443e-9a54-fea6e3e0dcf2" config-ref="HTTP_Listener_config" path="/operate"/>
+		<logger level="INFO" doc:name="Logger" doc:id="1da5321b-ca36-454b-b4a2-2e9da351e7ea" message="request recevied for the calculator operation : #[attributes.queryParams.operation]"/>
+		<set-variable value="#[attributes.queryParams.operation]" doc:name="Set Variable" doc:id="e7119287-f3ac-46e4-870d-e48af74fd984" variableName="result"/>
+		<set-variable value="#[payload.v1]" doc:name="Set Variable" doc:id="ab20657d-e584-462f-97db-4e1ef7c90ff8" variableName="v1"/>
+		<set-variable value="#[payload.v2]" doc:name="Set Variable" doc:id="4d187e18-18ad-4fc3-9d7e-054447603da0" variableName="v2"/>
+		<choice doc:name="Choice" doc:id="41e5b563-e8a3-444b-8b35-8c57456e8be9" >
+			<when expression='#[vars.result == "add"]'>
+				<set-payload value="#[vars.v1 + vars.v2]" doc:name="Set Payload" doc:id="545d0ae9-8271-422d-a413-692d6503febd" />
+			</when>
+			<when expression='#[vars.result == "sub"]'>
+				<set-payload value="#[vars.v1 - vars.v2]" doc:name="Set Payload" doc:id="e866a3b5-3cfb-49a0-a77d-e8e92da368d6" />
+			</when>
+			<when expression='#[vars.result == "multiplication"]'>
+				<set-payload value="#[vars.v1 * vars.v2]" doc:name="Set Payload" doc:id="9996b0c5-f5c4-40c5-a5f3-51c92bf0bcaa" />
+			</when>
+			<when expression='#[vars.result == "division"]'>
+				<set-payload value="#[vars.v1 / vars.v2]" doc:name="Set Payload" doc:id="f9c54f7e-10ef-4366-9898-85bc7446aea0" />
+			</when>
+		</choice>
+		<logger level="INFO" doc:name="Logger" doc:id="f39af43e-756d-425e-8c4d-1e9167e3c4a9" message="response sent for the calculator operation : #[attributes.queryParams.operation]"/>
+	</flow>
+</mule>
